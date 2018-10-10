@@ -62,3 +62,7 @@ typings/
 
 # ide
 .idea
+
+# npm extra
+test
+yarn.lock
