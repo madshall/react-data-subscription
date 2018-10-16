@@ -2,9 +2,11 @@
   "name": "react-data-subscription",
   "version": "1.0.0",
   "description": "Data provider for React applications. Simplifies data flow by handling component's props and state changes, automatically fetching new data if necessary and applying it directly to components state. Forget about promises, sagas, callbacks etc. This higher order component provides your component with a single prop that does the magic.",
-  "main": "index.js",
+  "main": "dist/index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "compile": "babel -d dist/ src/",
+    "prepublish": "yarn compile"
   },
   "repository": {
     "type": "git",
@@ -25,6 +27,13 @@
   "author": "Dmitry Ivanov <madshall.dev@gmail.com> (https://github.com/madshall)",
   "license": "MIT",
   "dependencies": {
+    "lodash": "^4.17.11",
+    "object-hash": "^1.3.0",
     "react": "^16.5.2"
+  },
+  "devDependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-preset-es2015": "^6.24.1",
+    "babel-preset-stage-0": "^6.24.1"
   }
 }

@@ -1,7 +1,7 @@
 const HTTP = require("http");
 const URL = require("url");
 
-const PORT = 3001;
+const PORT = process.env.PORT || 3001;
 
 const endpoints = {
   "ping": (params, response, method) => {
