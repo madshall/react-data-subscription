@@ -39,7 +39,7 @@ export default WrappedComponent => {
       
       subscription.on(Subscription.events.UPDATED, () => {
         console.log("handling update");
-        const newState = boundCalbackFunc(subscription.getState());
+        const newState = boundCalbackFunc(subscription.getState()) || {};
         // get only that part of state that exists in new state
         const oldState = pick(instance.state, keys(newState));
         console.log("on updated", oldState, newState);

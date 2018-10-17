@@ -4,6 +4,7 @@ import { dump } from "react-data-subscription";
 import './App.css';
 import Basic from "./components/basic";
 import BasicGet from "./components/basic-get";
+import BasicRefresh from "./components/basic-refresh";
 
 class App extends Component {
   componentDidMount() {
@@ -32,6 +33,7 @@ class App extends Component {
         {this.state.show && <Basic value={123} />}
         <Basic value={this.state.value} />
         <BasicGet value={this.state.value} />
+        <BasicRefresh value={123} />
       </div>
     );
   }

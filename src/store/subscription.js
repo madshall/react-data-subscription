@@ -96,7 +96,7 @@ export default class Subscription extends EventEmitter {
         oldHash: this._hash,
         newHash: hash,
       });
-    } else {
+    } else if (!forcedRefresh) {
       console.log("ignoring");
       return;
     }
