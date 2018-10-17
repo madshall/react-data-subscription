@@ -2,7 +2,7 @@
 # About
 This React HOC simplifies and optimizes communication with API and solves multiple problems at once:
 1. It doesn't rely on Saga, Thunk and Redux in general. No learning curve, no extra dependencies.
-2. It eliminates the overhead of using promises, callbacks, async/wait.
+2. It eliminates the overhead of using promises, callbacks, async/await.
 3. It optimizes network, memory usage and as a result - application performance.
 4. With this HOC you can make every single component a self-sufficient one with no harm to application performance.
 5. Everything data-related is handled in one place.
