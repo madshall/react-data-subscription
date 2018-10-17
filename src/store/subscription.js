@@ -41,7 +41,6 @@ export default class Subscription extends EventEmitter {
     
     this._entity = this._getEntity(hash);
     this._entity.on(Entity.events.CHANGED, (props) => {
-      console.log("entity changed", props);
       this._emitUpdated();
     });
   }
@@ -53,7 +52,6 @@ export default class Subscription extends EventEmitter {
   }
   
   _emitUpdated = () => {
-    console.log("emitting update");
     this.emit(Subscription.events.UPDATED);
   }
 
@@ -77,9 +75,7 @@ export default class Subscription extends EventEmitter {
   }
 
   run = (forcedRefresh = false) => {
-    console.log("run");
     if (!this._private.conditionFunc()) {
-      console.log("too early");
       return;  
     }
     
@@ -90,14 +86,12 @@ export default class Subscription extends EventEmitter {
     });
     
     if (hash !== this._hash) {
-      console.log("new hash");
       this._setEntity(hash);
       this.emit(Subscription.events.HASH_CHANGED, {
         oldHash: this._hash,
         newHash: hash,
       });
     } else if (!forcedRefresh) {
-      console.log("ignoring");
       return;
     }
     

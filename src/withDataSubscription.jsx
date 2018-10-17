@@ -25,7 +25,6 @@ export default WrappedComponent => {
         this.firstTimeCall = false;
         const originalComponentDidUpdate = instance.componentDidUpdate || EMPTY_FUNC;
         instance.componentDidUpdate = (...args) => {
-          console.log("did update", instance);
           this.subscriptions.forEach(_ => _.run());
           return originalComponentDidUpdate.apply(instance, args);
         }
@@ -38,11 +37,9 @@ export default WrappedComponent => {
       this.subscriptions.push(subscription);
       
       subscription.on(Subscription.events.UPDATED, () => {
-        console.log("handling update");
         const newState = boundCalbackFunc(subscription.getState()) || {};
         // get only that part of state that exists in new state
         const oldState = pick(instance.state, keys(newState));
-        console.log("on updated", oldState, newState);
         if (!isEqual(oldState, newState)) {
           instance.setState({ ...newState }); 
         }
