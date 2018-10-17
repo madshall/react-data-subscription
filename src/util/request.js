@@ -15,12 +15,12 @@ export default (url, params) => {
   
   const fetchParams = {...defaultParams, ...params};
   
-  fetch(transformUrl(url, fetchParams), {
+  return fetch(transformUrl(url, fetchParams), {
     ...fetchParams,
-    body: params.body 
-      ? transformPayload(params.body, fetchParams) 
-      : undefined,
+    body: transformPayload(params.body, fetchParams) 
   })
-  .then(transformResponse)
-  .catch(transformError);
+  .then(response => {
+    if (response.ok) return transformResponse(response);
+    throw transformError(response);
+  })
 };

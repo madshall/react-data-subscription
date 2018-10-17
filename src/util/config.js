@@ -1,5 +1,5 @@
 import { get, set, merge } from "lodash";
-import QueryString from "query-string";
+import QueryString from "querystring";
 
 const config = {
   request: {
@@ -8,9 +8,13 @@ const config = {
       "Accept": "application/json",
       "Content-Type": "application/json",
     },
-    transformPayload: (payload, requestParams) => JSON.stringify(payload),
+    transformPayload: (payload, requestParams) => {
+      if (requestParams.method !== "GET" && requestParams.method !== "HEAD") {
+        return JSON.stringify(payload || {});
+      }
+    },
     transformUrl: (url, requestParams) => {
-      if (requestParams.method === "GET") {
+      if (requestParams.method === "GET" || requestParams.method === "HEAD") {
         return `${url}?${QueryString.stringify(requestParams.body)}`;
       }
       

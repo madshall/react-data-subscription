@@ -9,7 +9,7 @@ const endpoints = {
     response.end(JSON.stringify({
       endpoint: "ping",
       params,
-      message: "ok",
+      message: "pong",
       method
     }));
   }

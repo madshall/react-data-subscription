@@ -1,2 +1,2 @@
-export {default as withDataSubscription} from "./withDataSubscription";
-export {default as config} from "./utils/config";
+export {default as withDataSubscription, dump} from "./withDataSubscription";
+export {default as config} from "./util/config";

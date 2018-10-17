@@ -1,58 +1,74 @@
 import { EventEmitter } from "events";
 import ObjectHash from "object-hash";
+import { values } from "lodash";
 
+import Entity from "./entity";
 import request from "../util/request";
 
-const DEFAULT_STATE = {
-  isLoading: false,
-  isRefreshing: false,
-  isLoaded: false,
-  isError: false,
-  isFinished: false,
-};
-
-const trueFunc = () => true;
+const TRUE_FUNC = () => true;
+const EMPTY_FUNC = () => {};
 
 export default class Subscription extends EventEmitter {
-  constructor(store, endpoint, params, payloadFunc, conditionFunc = trueFunc) {
-    super();
-    this._state = {
-      ...DEFAULT_STATE,
-    };
-    this._data = {
-      payload: null,
-      error: null,
-    };
-    this._private = {
-      endpoint,
-      params,
-      payloadFunc,
-      conditionFunc,
-    };
-    this._store = store;
-    this._hash = null;
-  }
-
-  _setState = (newState) => {
-    this._state = {
-      ...DEFAULT_STATE,
-      ...newState,
-    }
-    this.emit("updated");
-  }
-
-  _setData = (type, value) => {
-    this._data[type] = value;
+  static empty = (store) => {
+    return new Subscription();  
   }
   
+  static events = {
+    UPDATED: "updated",
+    HASH_CHANGED: "hash-changed",
+  };
+  
+  constructor(getEntity, endpoint, paramsFunc = EMPTY_FUNC, conditionFunc = TRUE_FUNC) {
+    super();
+    this._private = {
+      endpoint,
+      paramsFunc,
+      conditionFunc,
+    };
+    this._getEntity = getEntity;
+    this._hash = null;
+  }
+  
+  destructor() {
+    values(Subscription.events).forEach(eventName => {
+      this.removeAllListeners(eventName);
+    });
+    this._unlistenEntity();
+  }
+  
+  _setEntity = (hash) => {
+    this._unlistenEntity();
+    
+    this._entity = this._getEntity(hash);
+    this._entity.on(Entity.events.CHANGED, (props) => {
+      console.log("entity changed", props);
+      this._emitUpdated();
+    });
+  }
+  
+  _unlistenEntity = () => {
+    if (this._entity) {
+      this._entity.removeListener(Entity.events.CHANGED, this._emitUpdated);  
+    }
+  }
+  
+  _emitUpdated = () => {
+    console.log("emitting update");
+    this.emit(Subscription.events.UPDATED);
+  }
+
+  _setData = (data) => {
+    this._entity.setProps(data);
+  }
+
   getHash = () => {
     return this._hash;
   }
 
   getState = () => {
     return {
-      ...this._state,
-      ...this._data,
+      ...this._entity.getProps(),
+      refresh: this.refresh,
     };
   }
 
@@ -61,50 +77,67 @@ export default class Subscription extends EventEmitter {
   }
 
   run = (forcedRefresh = false) => {
+    console.log("run");
     if (!this._private.conditionFunc()) {
+      console.log("too early");
       return;  
     }
     
+    const params = this._private.paramsFunc();
     const hash = ObjectHash({
       endpoint: this._private.endpoint,
-      params: this._private.params,
-      payload: this._private.payloadFunc(),
+      params,
     });
     
     if (hash !== this._hash) {
-      this.emit("hash-changed", {
+      console.log("new hash");
+      this._setEntity(hash);
+      this.emit(Subscription.events.HASH_CHANGED, {
         oldHash: this._hash,
         newHash: hash,
       });
     } else {
+      console.log("ignoring");
       return;
     }
     
     this._hash = hash;
+
+    if ((this._entity.getProp("isLoading")
+      || this._entity.getProp("isFinished")
+      || this._entity.getProp("isRefreshing")
+    ) && !forcedRefresh) {
+      return;
+    }
     
-    this._setState({
-      isLoaing: !forcedRefresh,
+    this._entity.setProps({
+      isLoading: !forcedRefresh,
       isRefreshing: forcedRefresh,
+      isLoaded: false,
+      isFinished: false,
+      isError: false,
     });
     
-    // don't run if already running or fetched
-    const existingSubscription = this._store.getSubscription(this._hash);
-    if (existingSubscription && !(existingSubscription.isLoading || existingSubscription.isRefreshing)) {
-      request(this._private.endpoint, this._private.params, this._private.payloadFunc())
-        .then(response => {
-          this._setData("payload", response);
-          this._setState({
-            isLoaded: true,
-            isFinished: true,
-          });
-        })
-        .catch(error => {
-          this._setData("error", error);    
-          this._setState({
-            isError: true,
-            isFinished: true,
-          });
+    request(this._private.endpoint, params)
+      .then(payload => {
+        this._entity.setProps({
+          isLoading: false,
+          isRefreshing: false,
+          isLoaded: true,
+          isFinished: true,
+          payload,
+          error: null,
         });
-    }
+      })
+      .catch(error => {
+        this._entity.setProps({
+          isLoading: false,
+          isRefreshing: false,
+          isError: true,
+          isFinished: true,
+          payload: null,
+          error,
+        });
+      });
   }
 };

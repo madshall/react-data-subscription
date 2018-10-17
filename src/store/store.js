@@ -1,22 +1,26 @@
-import { pull, some } from "lodash";
-import Subscription from "./supscription";
+import { pull, some, cloneDeep } from "lodash";
 
-export default class Store {
+import Entity from "./entity";
+import Subscription from "./subscription";
+
+class Store {
   _store = {};
   _owners = [];
   
-  createSubscription = (endpoint, params, getPayload, conditionFunc) => {
-    const subscription = new Subscription(this, endpoint, params, getPayload, conditionFunc);
-    subscription.on("hash-changed", ({ oldHash, newHash }) => {
-      this._store[newHash] = this._store[newHash] || subscription;
-      this._tryCleanUpSubscription(oldHash);
+  createSubscription = (endpoint, paramsFunc, conditionFunc) => {
+    const subscription = new Subscription(this.getEntity, endpoint, paramsFunc, conditionFunc);
+
+    subscription.on(Subscription.events.HASH_CHANGED, ({ oldHash, newHash }) => {
+      this._tryCleanUpEntity(oldHash);
     });
 
     return subscription;
   }
   
-  getSubscription = hash => {
-    return this._store[hash];
+  getEntity = hash => {
+    return this._store[hash] 
+      ? this._store[hash] 
+      : (this._store[hash] = new Entity());
   }
   
   registerSubscriber = owner => {
@@ -26,13 +30,19 @@ export default class Store {
   
   unregisterSubscriber = owner => {
     owner.subscriptions.forEach(subscription => {
-      this._tryCleanUpSubscription(subscription.getHash());
+      this._tryCleanUpEntity(subscription.getHash());
+      subscription.destructor();
     });
     
     pull(this._owners, owner);
   }
   
-  _tryCleanUpSubscription = hash => {
+  dump = () => {
+    return cloneDeep(this._store);
+  }
+  
+  _tryCleanUpEntity = hash => {
+    if (!this._store[hash]) return;
     let usages = 0;
     const usedSomewhereElse = some(this._owners, owner => {
       return some(owner.subscriptions, subscription => {
@@ -46,6 +56,9 @@ export default class Store {
     
     if (usedSomewhereElse) return;
     
+    this._store[hash].destructor();
     delete this._store[hash];
   }
 }
+
+export default new Store();
