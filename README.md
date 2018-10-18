@@ -43,9 +43,9 @@ request: {
     "Accept": "application/json",
     "Content-Type": "application/json",
   },
-  transformPayload: (payload, requestParams) => {
+  transformPayload: (url, params, requestParams) => {
     if (requestParams.method !== "GET" && requestParams.method !== "HEAD") {
-      return JSON.stringify(payload || {});
+      return JSON.stringify(params.body || {});
     }
   },
   transformUrl: (url, requestParams) => {
@@ -68,15 +68,17 @@ Any of these settings can be overwritten and new ones can be added to be used by
 import { config } from "react-data-subscription";
 
 config.set({
-  credentials: "include",
-  redirect: "follow",
-  transformUrl: (url, requestParams) => {
-    const prefix = "/api";
-    if (requestParams.method === "GET" || requestParams.method === "HEAD") {
-      return `${prefix}${url}?${QueryString.stringify(requestParams.body)}`;
-    }
-    
-    return `${prefix}${url}`;
+  request: {
+    credentials: "include",
+    redirect: "follow",
+    transformUrl: (url, requestParams) => {
+      const prefix = "/api";
+      if (requestParams.method === "GET" || requestParams.method === "HEAD") {
+        return `${prefix}${url}?${QueryString.stringify(requestParams.body)}`;
+      }
+      
+      return `${prefix}${url}`;
+    },
   },
 })
 ```

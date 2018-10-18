@@ -8,9 +8,9 @@ const config = {
       "Accept": "application/json",
       "Content-Type": "application/json",
     },
-    transformPayload: (payload, requestParams) => {
+    transformPayload: (url, params, requestParams) => {
       if (requestParams.method !== "GET" && requestParams.method !== "HEAD") {
-        return JSON.stringify(payload || {});
+        return JSON.stringify(params.body || {});
       }
     },
     transformUrl: (url, requestParams) => {

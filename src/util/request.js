@@ -17,7 +17,7 @@ export default (url, params) => {
   
   return fetch(transformUrl(url, fetchParams), {
     ...fetchParams,
-    body: transformPayload(params.body, fetchParams) 
+    body: transformPayload(url, params, fetchParams) 
   })
   .then(response => {
     if (response.ok) return transformResponse(response);
