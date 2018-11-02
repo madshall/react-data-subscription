@@ -43,6 +43,8 @@ export default class Subscription extends EventEmitter {
     this._entity.on(Entity.events.CHANGED, (props) => {
       this._emitUpdated();
     });
+
+    this._emitUpdated();
   }
   
   _unlistenEntity = () => {
