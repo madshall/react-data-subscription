@@ -19,8 +19,8 @@ export default class Entity extends EventEmitter {
     
     this.body = {
       ...DEFAULT_STATE,
-      payload: null,
-      error: null,
+      payload: undefined,
+      error: undefined,
     };
   }
   

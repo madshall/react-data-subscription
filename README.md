@@ -152,8 +152,8 @@ The contents of `responseCallback` argument are:
 - `isLoaded: boolean` - `true` if there's no error and request was successfull. Usually means that its payload contains the response data.
 - `isError: boolean` - `true` if there's an error while making this request
 - `isFinished: boolean` - `true` if either `isLoaded` or `isError` is `true`.
-- `payload: object` - response body if there was no error. Default: `null`,
-- `error: object` - error detail if there was an error. Default: `null`.
+- `payload: object` - response body if there was no error. Default: `undefined`,
+- `error: object` - error detail if there was an error. Default: `undefined`.
 - `refresh: function` - a function that triggers re-fetch of data no matter what.
 
 # HOW-TOs

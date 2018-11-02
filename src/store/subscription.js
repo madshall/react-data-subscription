@@ -120,7 +120,7 @@ export default class Subscription extends EventEmitter {
           isLoaded: true,
           isFinished: true,
           payload,
-          error: null,
+          error: undefined,
         });
       })
       .catch(error => {
@@ -129,7 +129,7 @@ export default class Subscription extends EventEmitter {
           isRefreshing: false,
           isError: true,
           isFinished: true,
-          payload: null,
+          payload: undefined,
           error,
         });
       });
