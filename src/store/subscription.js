@@ -1,6 +1,6 @@
 import { EventEmitter } from "events";
 import ObjectHash from "object-hash";
-import { values } from "lodash";
+import { values, cloneDeep } from "lodash";
 
 import Entity from "./entity";
 import request from "../util/request";
@@ -106,7 +106,7 @@ export default class Subscription extends EventEmitter {
       return;
     }
     
-    this._entity.setProps({
+    this._setData({
       isLoading: !forcedRefresh,
       isRefreshing: forcedRefresh,
       isLoaded: false,
@@ -116,17 +116,17 @@ export default class Subscription extends EventEmitter {
     
     request(this._private.endpoint, params)
       .then(payload => {
-        this._entity.setProps({
+        this._setData({
           isLoading: false,
           isRefreshing: false,
           isLoaded: true,
           isFinished: true,
-          payload,
+          payload: cloneDeep(payload),
           error: undefined,
         });
       })
       .catch(error => {
-        this._entity.setProps({
+        this._setData({
           isLoading: false,
           isRefreshing: false,
           isError: true,

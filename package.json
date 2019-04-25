@@ -1,6 +1,6 @@
 {
   "name": "react-data-subscription",
-  "version": "2.0.4",
+  "version": "3.0.0",
   "description": "Data provider for React applications. Simplifies data flow by handling component's props and state changes, automatically fetching new data if necessary and applying it directly to component's state. Forget about promises, sagas, callbacks etc. This higher order component provides your component with a single prop that does the magic.",
   "main": "dist/index.js",
   "scripts": {
