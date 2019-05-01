@@ -67,7 +67,7 @@ export default class Subscription extends EventEmitter {
 
   getState = () => {
     return {
-      ...this._entity.getProps(),
+      ...cloneDeep(this._entity.getProps()),
       refresh: this.refresh,
     };
   }
@@ -121,7 +121,7 @@ export default class Subscription extends EventEmitter {
           isRefreshing: false,
           isLoaded: true,
           isFinished: true,
-          payload: cloneDeep(payload),
+          payload: payload,
           error: undefined,
         });
       })
