@@ -29,12 +29,17 @@ class Store {
   }
   
   unregisterSubscriber = owner => {
-    owner.subscriptions.forEach(subscription => {
-      this._tryCleanUpEntity(subscription.getHash());
-      subscription.destructor();
+    // Giving another newly mounted component a chance
+    // to pick up the subscription before removing it 
+    // completely
+    setTimeout(() => {
+      owner.subscriptions.forEach(subscription => {
+        this._tryCleanUpEntity(subscription.getHash());
+        subscription.destructor();
+      });
+
+      pull(this._owners, owner);
     });
-    
-    pull(this._owners, owner);
   }
   
   dump = () => {
