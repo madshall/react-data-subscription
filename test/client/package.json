@@ -4,7 +4,7 @@
   "private": true,
   "dependencies": {
     "react": "^16.5.2",
-    "react-data-subscription": "file:../../dist",
+    "react-data-subscription": "file:../../src",
     "react-dom": "^16.5.2",
     "react-scripts": "2.0.4"
   },
@@ -23,5 +23,5 @@
     "not ie <= 11",
     "not op_mini all"
   ],
-  "proxy": "https://3a681e918fe644c298ba12f6802bb234.vfs.cloud9.us-east-2.amazonaws.com:8081"
+  "proxy": "http://localhost:3001"
 }

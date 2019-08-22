@@ -13,11 +13,17 @@ export default WrappedComponent => {
     constructor(props) {
       super(props);
       this.firstTimeCall = true;
+      this.isMounted = false;
       store.registerSubscriber(this);
+    }
+
+    componentDidMount() {
+      this.isMounted = true;
     }
     
     componentWillUnmount() {
       store.unregisterSubscriber(this);
+      this.isMounted = false;
     }
     
     onSubscribe = (instance, endpoint, paramsFunc, callbackFunc, conditionFunc) => {
@@ -37,6 +43,12 @@ export default WrappedComponent => {
       this.subscriptions.push(subscription);
       
       subscription.on(Subscription.events.UPDATED, () => {
+        // subscription has not been disposed yet, but the component
+        // will or did unmount so we can't set any state on it anymore
+        if (this.isMounted === false) {
+          return;
+        }
+
         const newState = boundCalbackFunc(subscription.getState()) || {};
         // get only that part of state that exists in new state
         const oldState = pick(instance.state, keys(newState));
