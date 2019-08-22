@@ -12,7 +12,6 @@ class App extends Component {
     setInterval(() => {
       console.log(dump());
     }, 1e3);  
-    /*
     setTimeout(() => {
       this.setState({ value: 321 });
     }, 10e3);  
@@ -22,7 +21,6 @@ class App extends Component {
     setTimeout(() => {
       this.setState({ show: false });
     }, 20e3);
-    */  
   }
   
   state = {
@@ -33,12 +31,10 @@ class App extends Component {
   render() {
     return (
       <div className="App">
-      {/*}
         {this.state.show && <Basic value={123} />}
         <Basic value={this.state.value} />
         <BasicGet value={this.state.value} />
         <BasicRefresh value={123} />
-    */}
         <PickUp />
       </div>
     );

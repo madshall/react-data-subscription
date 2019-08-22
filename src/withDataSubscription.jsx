@@ -13,17 +13,17 @@ export default WrappedComponent => {
     constructor(props) {
       super(props);
       this.firstTimeCall = true;
-      this.isMounted = false;
+      this._isMounted = false;
       store.registerSubscriber(this);
     }
 
     componentDidMount() {
-      this.isMounted = true;
+      this._isMounted = true;
     }
     
     componentWillUnmount() {
       store.unregisterSubscriber(this);
-      this.isMounted = false;
+      this._isMounted = false;
     }
     
     onSubscribe = (instance, endpoint, paramsFunc, callbackFunc, conditionFunc) => {
@@ -45,7 +45,7 @@ export default WrappedComponent => {
       subscription.on(Subscription.events.UPDATED, () => {
         // subscription has not been disposed yet, but the component
         // will or did unmount so we can't set any state on it anymore
-        if (this.isMounted === false) {
+        if (this._isMounted === false) {
           return;
         }
 
