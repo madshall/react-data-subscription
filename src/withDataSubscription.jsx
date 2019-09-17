@@ -17,10 +17,6 @@ export default WrappedComponent => {
       store.registerSubscriber(this);
     }
 
-    componentDidMount() {
-      this._isMounted = true;
-    }
-    
     componentWillUnmount() {
       store.unregisterSubscriber(this);
       this._isMounted = false;
@@ -28,6 +24,7 @@ export default WrappedComponent => {
     
     onSubscribe = (instance, endpoint, paramsFunc, callbackFunc, conditionFunc) => {
       if (this.firstTimeCall) {
+        this._isMounted = true;
         this.firstTimeCall = false;
         const originalComponentDidUpdate = instance.componentDidUpdate || EMPTY_FUNC;
         instance.componentDidUpdate = (...args) => {
