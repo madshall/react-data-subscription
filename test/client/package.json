@@ -4,7 +4,7 @@
   "private": true,
   "dependencies": {
     "react": "^16.5.2",
-    "react-data-subscription": "file:../../src",
+    "react-data-subscription": "file:../../dist",
     "react-dom": "^16.5.2",
     "react-scripts": "2.0.4"
   },

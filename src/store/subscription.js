@@ -3,24 +3,21 @@ import ObjectHash from "object-hash";
 import { values, cloneDeep } from "lodash";
 
 import Entity from "./entity";
-import request from "../util/request";
+import createRequest from "../util/request";
 
 const TRUE_FUNC = () => true;
 const EMPTY_FUNC = () => {};
 
 export default class Subscription extends EventEmitter {
-  static empty = (store) => {
-    return new Subscription();  
-  }
-  
   static events = {
     UPDATED: "updated",
     HASH_CHANGED: "hash-changed",
   };
   
-  constructor(getEntity, endpoint, paramsFunc = EMPTY_FUNC, conditionFunc = TRUE_FUNC) {
+  constructor(config, getEntity, endpoint, paramsFunc = EMPTY_FUNC, conditionFunc = TRUE_FUNC) {
     super();
     this._private = {
+      request: createRequest(config),
       endpoint,
       paramsFunc,
       conditionFunc,
@@ -114,7 +111,7 @@ export default class Subscription extends EventEmitter {
       isError: false,
     });
     
-    request(this._private.endpoint, params)
+    this._private.request(this._private.endpoint, params)
       .then(payload => {
         this._setData({
           isLoading: false,

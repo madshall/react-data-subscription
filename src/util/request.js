@@ -1,7 +1,5 @@
 /* global fetch */
-import config from "./config";
-
-export default (url, params) => {
+export default config => (url, params) => {
   const {
     transformPayload,
     transformUrl,

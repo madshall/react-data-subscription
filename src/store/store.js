@@ -6,9 +6,13 @@ import Subscription from "./subscription";
 class Store {
   _store = {};
   _owners = [];
+
+  constructor(config) {
+    this.config = config;
+  }
   
   createSubscription = (endpoint, paramsFunc, conditionFunc) => {
-    const subscription = new Subscription(this.getEntity, endpoint, paramsFunc, conditionFunc);
+    const subscription = new Subscription(this.config, this.getEntity, endpoint, paramsFunc, conditionFunc);
 
     subscription.on(Subscription.events.HASH_CHANGED, ({ oldHash, newHash }) => {
       this._tryCleanUpEntity(oldHash);
@@ -66,4 +70,4 @@ class Store {
   }
 }
 
-export default new Store();
+export default config => new Store(config);

@@ -65,7 +65,9 @@ response: {
 Any of these settings can be overwritten and new ones can be added to be used by `fetch` function.
 
 ```javascript
-import { config } from "react-data-subscription";
+import { createConfig } from "react-data-subscription";
+
+const config = createConfig();
 
 config.set({
   request: {
@@ -80,17 +82,32 @@ config.set({
       return `${prefix}${url}`;
     },
   },
-})
+});
 ```
 
 **NOTE: This is a global config. It controls the way the module will behave for all components**
 
 ## HOC
 Adds an extra prop called `subscribe` to your component.
+The HOC is still to be created using the proper config. This allows having multiple data transports within the app. Each data transport will have its own HOC.
+
+Creating the HOC:
+
+```javascript
+// withDataSubscription.jsx
+import { createConfig, createDataSubscription } from "react-data-subscription";
+const config = createConfig();
+
+// set up config here
+// config.set(...)
+//
+
+export default createDataSubscription(config);
+```
 
 ```javascript
 import React from "react";
-import { withDataSubscription } from "react-data-subscription";
+import withDataSubscription from "./withDataSubscription";
 
 class MyComponent extends React.Component {
   componentDidMount() {
@@ -162,7 +179,7 @@ Polling means the same request needs to be made with some interval. Data subscri
 
 ```javascript
 import React from "react";
-import { withDataSubscription } from "react-data-subscription";
+import withDataSubscription from "./withDataSubscription";
 
 class MyComponent extends React.Component {
   componentDidMount() {
@@ -219,7 +236,7 @@ Sometimes there's a need to make several requests in order to gather all require
 
 ```javascript
 import React from "react";
-import { withDataSubscription } from "react-data-subscription";
+import withDataSubscription from "./withDataSubscription";
 
 class MyComponent extends React.Component {
   componentDidMount() {
@@ -287,8 +304,8 @@ Sometimes one request is dependent on the data returned by another one. Since al
 
 ```javascript
 import React from "react";
-import { withDataSubscription } from "react-data-subscription";
 import { get } from "lodash";
+import withDataSubscription from "./withDataSubscription";
 
 class MyComponent extends React.Component {
   componentDidMount() {
@@ -370,7 +387,7 @@ If you're not interested in handling request's `isLoading`, `isRefreshing` etc. 
 
 ```javascript
 import React from "react";
-import { withDataSubscription } from "react-data-subscription";
+import withDataSubscription from "./withDataSubscription";
 
 class MyComponent extends React.Component {
   componentDidMount() {
@@ -420,7 +437,7 @@ The best place to invoke data transformation is inside `responseCallback` becaus
 
 ```javascript
 import React from "react";
-import { withDataSubscription } from "react-data-subscription";
+import withDataSubscription from "./withDataSubscription";
 
 class MyComponent extends React.Component {
   componentDidMount() {
@@ -471,6 +488,7 @@ class MyComponent extends React.Component {
 
 export default withDataSubscription(MyComponent);
 ```
+
 # Contributions
 Feel free t submit a PR for any enhancements. The repo contains a playground for testing:
 - Demo server: `./test/server.js`

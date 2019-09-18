@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { dump } from "react-data-subscription";
+import dataSubscription from "./withDataSubscription";
 
 import './App.css';
 import Basic from "./components/basic";
@@ -10,7 +10,7 @@ import PickUp from "./components/pick-up";
 class App extends Component {
   componentDidMount() {
     setInterval(() => {
-      console.log(dump());
+      console.log(dataSubscription.dump());
     }, 1e3);  
     setTimeout(() => {
       this.setState({ value: 321 });
