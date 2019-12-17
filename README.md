@@ -102,12 +102,12 @@ const config = createConfig();
 // config.set(...)
 //
 
-export default createDataSubscription(config);
+export const { withDataSubscription, dataSubscriptionRequest } = createDataSubscription(config);
 ```
 
 ```javascript
 import React from "react";
-import withDataSubscription from "./withDataSubscription";
+import { withDataSubscription } from "./withDataSubscription";
 
 class MyComponent extends React.Component {
   componentDidMount() {
@@ -179,7 +179,7 @@ Polling means the same request needs to be made with some interval. Data subscri
 
 ```javascript
 import React from "react";
-import withDataSubscription from "./withDataSubscription";
+import { withDataSubscription } from "./withDataSubscription";
 
 class MyComponent extends React.Component {
   componentDidMount() {
@@ -236,7 +236,7 @@ Sometimes there's a need to make several requests in order to gather all require
 
 ```javascript
 import React from "react";
-import withDataSubscription from "./withDataSubscription";
+import { withDataSubscription } from "./withDataSubscription";
 
 class MyComponent extends React.Component {
   componentDidMount() {
@@ -305,7 +305,7 @@ Sometimes one request is dependent on the data returned by another one. Since al
 ```javascript
 import React from "react";
 import { get } from "lodash";
-import withDataSubscription from "./withDataSubscription";
+import { withDataSubscription } from "./withDataSubscription";
 
 class MyComponent extends React.Component {
   componentDidMount() {
@@ -387,7 +387,7 @@ If you're not interested in handling request's `isLoading`, `isRefreshing` etc. 
 
 ```javascript
 import React from "react";
-import withDataSubscription from "./withDataSubscription";
+import { withDataSubscription } from "./withDataSubscription";
 
 class MyComponent extends React.Component {
   componentDidMount() {
@@ -437,7 +437,7 @@ The best place to invoke data transformation is inside `responseCallback` becaus
 
 ```javascript
 import React from "react";
-import withDataSubscription from "./withDataSubscription";
+import { withDataSubscription } from "./withDataSubscription";
 
 class MyComponent extends React.Component {
   componentDidMount() {
@@ -487,6 +487,27 @@ class MyComponent extends React.Component {
 }
 
 export default withDataSubscription(MyComponent);
+```
+
+## Get data outside of React
+In some cases, it may be convenient to make a request outside of React. We can do that while still getting the benefits of this library by using `dataSubscriptionRequest`.
+In this example, we create a function that returns a promise that resolves with the data subscription. If this function is used in multiple places, it will only make one API call.
+If there are React components using `withDataSubscription` to request the same data, it will share the API response among them as well.
+
+```javascript
+import { dataSubscriptionRequest } from './withDataSubscription';
+
+export function getTodos() {
+  return new Promise((resolve, reject) => {
+    dataSubscriptionRequest("/getTodos", todos => {
+      if (todos.isLoaded) {
+        resolve(todos.payload);
+      } else if (todos.isError) {
+        reject(todos.error);
+      })
+    });
+  });
+}
 ```
 
 # Contributions

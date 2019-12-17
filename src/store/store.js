@@ -49,6 +49,15 @@ class Store {
   dump = () => {
     return cloneDeep(this._store);
   }
+
+  request = (endpoint, updatedCallback) => {
+    const subscription = this.createSubscription(endpoint);
+    subscription.run();
+
+    subscription.on(Subscription.events.UPDATED, () => {
+      updatedCallback(subscription.getState());
+    });
+  }
   
   _tryCleanUpEntity = hash => {
     if (!this._store[hash]) return;

@@ -6,7 +6,7 @@ import Entity from "./entity";
 import createRequest from "../util/request";
 
 const TRUE_FUNC = () => true;
-const EMPTY_FUNC = () => {};
+const EMPTY_FUNC = () => ({});
 
 export default class Subscription extends EventEmitter {
   static events = {
