@@ -71,5 +71,8 @@ export default config => {
 
   hoc.dump = () => store.dump();
 
-  return hoc;
+  return {
+    withDataSubscription: hoc,
+    dataSubscriptionRequest: store.request,
+  };
 };

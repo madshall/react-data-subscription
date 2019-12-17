@@ -1,5 +1,5 @@
 import React from "react";
-import withDataSubscription from "../withDataSubscription";
+import { withDataSubscription } from "../withDataSubscription";
 
 class Component extends React.Component {
   constructor(props) {
